@@ -1,0 +1,85 @@
+/* Move down content because we have a fixed navbar that is 50px tall */
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,900');
+body {
+  padding-top: 120px;
+  padding-bottom: 20px;
+  /*background: lightgray;*/
+  font-family: 'Roboto', sans-serif;
+}
+.gieom-navbar .navbar {
+  height: 120px;
+  /*background: #020621;*/
+}
+.gieom-sidebar{
+  margin: 20px 0 0 0 ;
+  padding: 20px;
+  border: 1px solid lightblue;
+}
+.gieom-main-content{
+  margin-top:15px;
+  background: white;
+  /*width: 100%;*/
+}
+.gieom-main-content .list-content .row .col-sm-4 {
+  padding-left:5px;
+  padding-right: 5px;
+}
+/*////////////////*/
+.no-padding-left{
+  padding-left: 0;
+}
+.result-box{
+  position: relative;
+  padding:10px;
+  border:1px solid lightgray;
+  border-top:1px solid orangered;
+  margin: 10px 10px 30px 10px;
+  padding-bottom: 40px;
+  border-radius: 10px;
+}
+.result-box .result-title,.result-box .result-title:visited {
+  font-size: 16px;
+  font-weight: 600;
+  color:darkslategray;
+  text-decoration: none;
+  margin-bottom: 20px;
+}
+.result-box .result-by {
+  /*text-align: right;*/
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.result-bar {
+  height: 3px;
+  background: darkolivegreen;
+  width:100%;
+  display: inline-block;
+}
+.result-days-to-go {
+  float: right;
+  padding: 2px 15px 2px 15px;
+  background: #94b29b;
+  color: white;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  border-bottom-right-radius: 10px;
+}
+.svg--ksr-logo {
+    width: 152px;
+    display: flex;
+    /*margin: auto;*/
+    padding: 10px 10px 10px 0;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid lightblue;
+    
+}
+.svg-fill--starter {
+    fill: #2BDE73;
+}
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
