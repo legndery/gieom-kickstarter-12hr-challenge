@@ -6,14 +6,35 @@ body {
   /*background: lightgray;*/
   font-family: 'Roboto', sans-serif;
 }
-.gieom-navbar .navbar {
-  height: 120px;
+.gieom-navbar{
+  /*height: 120px;*/
   /*background: #020621;*/
+  position: fixed;
+  width:100%;
+  top:0;
+  z-index: 1000;
+}
+.gieom-navbar .row {
+  position: relative;
+}
+.img-container{
+  min-width: 195px;
+}
+.sort-by-field {
+  position: absolute;
+  right: 10;
+  bottom: 0;
+}
+.gieom-navbar .navbar-img {
+  display: inline-block;
 }
 .gieom-sidebar{
   margin: 20px 0 0 0 ;
   padding: 20px;
   border: 1px solid lightblue;
+}
+.gieom-sidebar .input-group {
+  width: 100%;
 }
 .gieom-main-content{
   margin-top:15px;
@@ -54,6 +75,7 @@ body {
   background: darkolivegreen;
   width:100%;
   display: inline-block;
+  margin-bottom: 10px;
 }
 .result-days-to-go {
   float: right;
@@ -61,9 +83,23 @@ body {
   background: #94b29b;
   color: white;
   position: absolute;
+  left: 0;
+  bottom: 0;
+  border-bottom-left-radius: 10px;
+}
+.result-view-details {
+  position: absolute;
   right: 0;
   bottom: 0;
-  border-bottom-right-radius: 10px;
+  padding: 5px 10px 5px 5px;
+  text-decoration: none;
+}
+.result-view-details, .result-view-details:visited {
+  color: #2BDE73;
+  font-weight: 700;
+}
+.default-hidden{
+  display: None;
 }
 .svg--ksr-logo {
     width: 152px;
@@ -82,4 +118,23 @@ body {
   content: "";
   display: table;
   clear: both;
+}
+.ui-autocomplete {
+  list-style: none;
+  background: white;
+  border: 1px solid lightblue;
+  width:350px;
+  padding:0;
+ 
+}
+.ui-autocomplete li {
+  border-bottom: 1px solid lightblue;
+  padding: 10px;
+  cursor: pointer;
+}
+.ui-autocomplete li:hover {
+  background: lightgrey;
+}
+.ui-helper-hidden-accessible {
+  display: none;
 }

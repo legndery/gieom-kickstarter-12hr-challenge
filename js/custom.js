@@ -2,6 +2,7 @@ $(function(){
     $listItem = $('.list-content');
     GioemKickstarter.init($listItem);
 });
+
 var _MS_PER_DAY = 1000 * 60 * 60 * 24;
 function dateDiffInDays(a, b) {
   // Discard the time and time-zone information.
@@ -14,6 +15,7 @@ function dateDiffInDays(a, b) {
 var GioemKickstarter = {
 
     itemArray: new Array(),
+    itemTitleArray: new Array(),
     parentElement:$(),
     kickstarterSVG: '<svg class="svg--ksr-logo" viewBox="0 0 354 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">'+
   '<path class="svg-fill--kick" d="M13.2157427,13.5552759 L20.3375224,3.69776954 C21.6837338,1.84097866 23.4218359,0.912583227 25.5529967,0.912583227 C27.2916828,0.912583227 28.7961689,1.50175725 30.0676233,2.68010531 C31.3384936,3.85845336 31.9745128,5.26945821 31.9745128,6.91256191 C31.9745128,8.12661748 31.6375219,9.19840092 30.9647082,10.1267964 L24.5437761,19.0464225 L32.3944374,28.5552226 C33.1793867,29.5020297 33.5724454,30.6089628 33.5724454,31.8771375 C33.5724454,33.5553908 32.9556995,34.9970818 31.7216237,36.2022105 C30.4881319,37.4084551 28.9924063,38.0110194 27.2356149,38.0110194 C25.3100361,38.0110194 23.8429285,37.4129185 22.8331239,36.2161587 L13.2157427,24.7518141 L13.2157427,31.0731605 C13.2157427,32.8775059 12.8886804,34.278468 12.234556,35.2782785 C11.0378587,37.0999198 9.29917262,38.0110194 7.01908175,38.0110194 C4.9439888,38.0110194 3.33612758,37.3415035 2.19608215,36.0019136 C1.13079379,34.7694464 0.598149607,33.1358275 0.598149607,31.0999411 L0.598149607,7.66241976 C0.598149607,5.73365593 1.14013842,4.14467143 2.22470009,2.89435041 C3.36416149,1.57317229 4.93464416,0.912583227 6.93498003,0.912583227 C8.84186956,0.912583227 10.4304575,1.57317229 11.7019118,2.89435041 C12.41152,3.62691243 12.8600625,4.36784341 13.0475392,5.11770126 C13.1596748,5.58245691 13.2157427,6.44836419 13.2157427,7.71598104 L13.2157427,13.5552759" id="Fill-1-Copy"></path>'+
@@ -33,10 +35,72 @@ var GioemKickstarter = {
         GioemKickstarter.parentElement = element;
 
         GioemKickstarter.getElementsFromAPI(
-        "http://starlord.hackerearth.com/kickstarter",
-        GioemKickstarter.populateArray,
-        GioemKickstarter.getHTMLmarkup
+            "http://starlord.hackerearth.com/kickstarter",
+            GioemKickstarter.populateArray,
+            GioemKickstarter.getHTMLmarkup
         );
+        $('#autocomplete').autocomplete({
+            source: GioemKickstarter.itemTitleArray,
+            select: function( event, ui ) {
+                GioemKickstarter.getHTMLmarkup([ui.item.data]);
+               }
+        });
+        $('#autocomplete').change(function(){
+            if($(this).val() == ''){
+                GioemKickstarter.getHTMLmarkup();
+            }
+        });
+        $('#autocomplete').keypress(function(e) {
+            var sterm = $(this).val().toLowerCase();
+            elements = [];
+            if (e.which == 13) {
+                if(sterm != ''){
+                    $.each(GioemKickstarter.itemArray, function(key,obj){
+                        if(obj.title.toLowerCase().indexOf(sterm)>=0){
+                            elements.push(obj);
+                        }
+                    });
+                }
+                GioemKickstarter.getHTMLmarkup(elements);
+            }
+        });
+        $('body').on('click', '.result-view-details', function() {
+            $element =$(this).parent().parent().parent().parent();
+            if($(this).hasClass("selected")){
+                $element.removeClass('col-xs-12').addClass('col-sm-4').removeAttr('style');
+                $(this).text("View Details");
+                $element.find(".default-hidden-shown").addClass('default-hidden').removeClass('default-hidden-shown');
+            }else{
+                $element.removeClass('col-sm-4').addClass('col-xs-12').css({"float":"none"});
+                $element.find('.default-hidden').addClass('default-hidden-shown').removeClass('default-hidden');
+                $(this).text("View Less");
+            }
+            
+            $(this).toggleClass("selected");
+        });
+        $('.sort-by-field select').change(function(){
+            var value = $(this).val();
+            switch(value){
+                case "0":
+                    GioemKickstarter.itemArray.sort(GioemKickstarter.sortBy("title","asc"));
+                    break;
+                case "1":
+                    GioemKickstarter.itemArray.sort(GioemKickstarter.sortBy("title","desc"));
+                    break;
+                case "2":
+                    GioemKickstarter.itemArray.sort(GioemKickstarter.sortNumber("time.left.days","asc"));
+                    break;
+                case "3":
+                    GioemKickstarter.itemArray.sort(GioemKickstarter.sortNumber("time.left.days","desc"));
+                    break;
+                case "4":GioemKickstarter.itemArray.sort(GioemKickstarter.sortNumber("percentage.funded","asc"));
+                    break;
+                case "5":GioemKickstarter.itemArray.sort(GioemKickstarter.sortNumber("percentage.funded","desc"));
+                    break;
+            }
+            GioemKickstarter.getHTMLmarkup();
+            // console.log(value);
+        });
         
     },
     generateTiles:function(index, item){
@@ -46,28 +110,51 @@ var GioemKickstarter = {
 		}
 
 		$resultBox = $('<div>',{"class":"result-box"});
+// num.backers: "219382",
+// 
+// type: "Town",
+// url: "/projects/1608905146/catalysts-explorers-and-secret-keepers-women-of-sf?ref=discovery"
 
         var template =  GioemKickstarter.kickstarterSVG+
-                        '<p><a href="#" class="result-title" data-name="result-title"></a></p>'+
+                        '<p><a href="#" class="result-title" target="_blank" data-name="result-title"></a></p>'+
                         '<p class="result-by" data-name="result-by"></p>'+
+                        '<p class="result-desc default-hidden" data-name="result-desc"></p>'+
                         '<p class="result-pledged" data-name="result-pledged"></p>'+
+                        '<p class="result-num-backers default-hidden" data-name="result-num-backers"></p>'+
                         '<div class="clearfix"><span style="float:left">0%</span><span style="float:right">100%</span></div>'+
                         '<span class="result-bar"></span>'+
-                        '<span class="result-days-to-go" data-name="result-days-to-go">Days to go: 21</span>';
+                        '<p class="result-location default-hidden" data-name="result-location"></p>'+
+                        '<p class="result-type default-hidden" data-name="result-type"></p>'+
+                        '<div class="clearfix">'+
+                        '<span class="result-days-to-go" data-name="result-days-to-go">Days to go: 21</span>'+
+                        '<div class="additional-information"></div>'+
+                        '<span><a href="javascript:void(0)" class="result-view-details">View Details</a></span>';
         $resultBox.append(template);
         $resultBox.find('*[data-name="result-title"]').text(item.title).attr("href",GioemKickstarter.prependURL+ item.url);
         $resultBox.find('*[data-name="result-by"]').text(item.by);
         $resultBox.find('*[data-name="result-pledged"]').html("<strong>Pledged: </strong>$"+item["amt.pledged"]);
         $resultBox.find('.result-bar').css({'width':item["percentage.funded"]>100?'100%':item["percentage.funded"]+'%'});
-        $resultBox.find('*[data-name="result-days-to-go"]').text("Days to Go: "+dateDiffInDays(new Date(item["end.time"]),new Date()));
+        $resultBox.find('*[data-name="result-days-to-go"]').text("Days to Go: "+item["time.left.days"]);
+        $resultBox.find('*[data-name="result-desc"]').text(item["blurb"]);
+        $resultBox.find('*[data-name="result-num-backers"]').html("<strong>Number of backers: </strong>"+item["num.backers"]);
+        $resultBox.find('*[data-name="result-location"]').html("<strong>Location: </strong>"+item["location"]+", "+item["country"]);
+        $resultBox.find('*[data-name="result-type"]').html("<strong>Type: </strong>"+item["type"]);
+        
         $resultBox.appendTo($container);
         return $container;
                         
     },
-    getHTMLmarkup:function(){
+    getHTMLmarkup:function(array=[]){
         // $rowElement = $('<div>',{'class':'row'});
+        GioemKickstarter.parentElement.empty();
+        var tempArr = []
+        if(array.length>0){
+            tempArr = array;
+        } else{
+            tempArr = GioemKickstarter.itemArray;
+        }
         elements = [];
-        $.each(GioemKickstarter.itemArray,function(key,item){
+        $.each(tempArr,function(key,item){
             
             if((key+1)%3 == 0){
                 elements.push(GioemKickstarter.generateTiles(key, item));
@@ -83,9 +170,59 @@ var GioemKickstarter = {
             GioemKickstarter.parentElement.append($('<div>',{'class':'row'}).append(elements));
         }
     },
+    applySorting:function(callback){
+
+    },
+    sortBy:function(param,key){
+        if(key=="asc"){
+            return function(a,b){
+            if( a[param].toLowerCase() > b[param].toLowerCase()){
+                return 1;
+            }else if( a[param].toLowerCase() < b[param].toLowerCase() ){
+                return -1;
+            }
+            return 0;
+        }
+        }
+        if(key=="desc"){
+            return function(a,b){
+            if( b[param].toLowerCase() > a[param].toLowerCase()){
+                return 1;
+            }else if( b[param].toLowerCase() < a[param].toLowerCase() ){
+                return -1;
+            }
+            return 0;
+        }
+        }
+    },
+	
+	sortNumber:function(param,key){
+		if(key=="asc"){
+			return function(a,b){
+		      if(a[param] > b[param]){
+		          return 1;
+		      }else if(a[param] < b[param]){
+		          return -1;
+		      }
+		      return 0;
+		   }
+		}
+		if(key=="desc"){
+			return function(a,b){
+		      if(b[param] > a[param]){
+		          return 1;
+		      }else if(b[param] < a[param]){
+		          return -1;
+		      }
+		      return 0;
+		   }
+		}
+	},
     populateArray:function(data){
         $.each( data, function( key, obj ) {
+            obj["time.left.days"] = dateDiffInDays(new Date(obj["end.time"]),new Date());
             GioemKickstarter.itemArray.push( obj );
+            GioemKickstarter.itemTitleArray.push({'value':obj.title, 'data':obj});
         });
     },
     getElementsFromAPI: function(url, success, complete){

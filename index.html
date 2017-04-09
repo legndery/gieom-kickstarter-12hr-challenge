@@ -26,35 +26,43 @@
   </head>
 
   <body>
-    <section class="gieom-navbar">
-        <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">Gieom-Kickstarter</a>
+    <section>
+        <div class="container-fluid navbar-default gieom-navbar">
+            <div class="row">
+                <div class="col-xs-12">
+                    <img src="./images/logo.png" class="navbar-img">
+                    <div class="sort-by-field">
+                    <form class="form-inline">
+                    <div class="form-group">
+                        <label for="sorting">Sort By:</label>
+                        <select class="form-control">
+                            <option>Select..</option>
+                            <option value="0">Title, A-Z</option>
+                            <option value="1">Title, Z-A</option>
+                            <option value="2">Days To Go, 0-9</option>
+                            <option value="3">Days to Go, 9-0</option>
+                            <option value="4">Percentage Funded, 0-9</option>
+                            <option value="5">Percentage Funded, 9-0</option>
+                        </select>
+                    </div>
+                    </form>
+                    </div>
+                </div>
             </div>
-            <div id="navbar" class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-            </div><!--/.nav-collapse -->
         </div>
-        </nav>
     </section>
 
     <div class="container-fluid">
         <div class="row">
-        <div class="col-md-3 hidden-xs hidden-sm">
+        <div class="col-md-3">
             <section class="gieom-sidebar navbar-default">
                 <div class="sidebar-container">
-                    <p class="lead">Filters: </p>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search for..." id="autocomplete">
+                        <!--<span class="input-group-btn">
+                            <button class="btn btn-default" type="button">Go!</button>
+                        </span>-->
+                    </div><!-- /input-group -->
                 </div>
             </section>
         </div>
@@ -79,6 +87,7 @@
     <script src="./js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="./js/custom.js"></script>
+    <script src="./js/jquery-ui.min.js"></script>
     <script src="./js/ie10-viewport-bug-workaround.js"></script>
   
 
